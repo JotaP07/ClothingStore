@@ -1,7 +1,5 @@
-package com.app.ClothingStore.service;
+package com.app.ClothingStore.entity;
 
-
-import com.app.ClothingStore.entity.Sale;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -21,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Client{
+public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,10 +38,10 @@ public class Client{
     private Integer age;
 
     @NotNull(message = "O telefone não deve ser nulo.")
-    @Pattern(regexp = "/(/d{2}/) /d{4,5}-/d{4}", message = "Número de telefone inválido. O formato deve ser (XX) XXXX-XXXX ou (XX) XXXXX-XXXX.")
+    @Pattern(regexp = "\\(\\d{2}\\) \\d{4,5}-\\d{4}", message = "Número de telefone inválido. O formato deve ser (XX) XXXX-XXXX ou (XX) XXXXX-XXXX.")
     private String telephone;
 
-//    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
-//    @JsonIgnoreProperties("clients")
-//    private List<Sale> sales;
+    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
+    @JsonIgnoreProperties("client")
+    private List<Sale> sales;
 }

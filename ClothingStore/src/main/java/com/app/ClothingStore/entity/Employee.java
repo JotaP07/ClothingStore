@@ -35,7 +35,8 @@ public class Employee {
     @NotBlank(message = "O registro não pode ser nulo")
     private String registration;
 
-//    @OneToMany(mappedBy = "employee", cascade = CascadeType.PERSIST)
-//    @JsonIgnoreProperties("employee")
-//    private List<Sale> sales;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.PERSIST)
+    @JsonIgnoreProperties("employee")
+    private List<Sale> sales;
+
 }
