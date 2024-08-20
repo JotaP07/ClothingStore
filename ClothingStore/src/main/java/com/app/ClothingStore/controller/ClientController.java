@@ -2,9 +2,11 @@ package com.app.ClothingStore.controller;
 
 import com.app.ClothingStore.entity.Client;
 import com.app.ClothingStore.service.ClientService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,8 +29,23 @@ public class ClientController {
         }
     }
 
+    @PostMapping("/saveAll")
+    public ResponseEntity<String> saveAll(@RequestBody List<Client> clients){
+        try {
+            clientService.saveAll(clients);
+            return new ResponseEntity<>("Clientes salvos com sucesso!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@RequestBody Client client, @PathVariable Long id) {
+    public ResponseEntity<String> update(@PathVariable Long id, @Valid @RequestBody Client client, BindingResult result) { //BindingResult armazena o resultado, caso errado trata corretamente e cai no if
+        if (result.hasErrors()) {
+            String errorMessage = result.getAllErrors().get(0).getDefaultMessage();
+            return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
         try {
             String mensagem = clientService.update(client, id);
             return new ResponseEntity<>(mensagem, HttpStatus.OK);
@@ -36,6 +53,7 @@ public class ClientController {
             return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {

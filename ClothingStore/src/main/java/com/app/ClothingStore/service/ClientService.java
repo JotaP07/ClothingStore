@@ -19,6 +19,10 @@ public class ClientService {
         return "Cliente " + client.getName() + " salvo com sucesso!";
     }
 
+    public void saveAll(List<Client> clients){
+        clientRepository.saveAll(clients);
+    }
+
     public String update(Client client, Long id) {
         if (clientRepository.existsById(id)) {
             client.setId(id);
