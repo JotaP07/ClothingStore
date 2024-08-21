@@ -6,13 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ClientRepository extends JpaRepository<Client, Long> {
     List<Client> findByNameContaining(String name);
-    Optional<Client> findByCpf(String cpf);
-    List<Client> findByAgeGreaterThanEqual(Integer age);
+    List<Client> findByCpf(String cpf);
 
+    //JPQL | %.% significa "qualquer coisa antes e depois do valor".
     @Query("SELECT c FROM Client c WHERE c.name LIKE %:name% AND c.age = :age")
     List<Client> findByNameAndAge(@Param("name") String name, @Param("age") Integer age);
 }

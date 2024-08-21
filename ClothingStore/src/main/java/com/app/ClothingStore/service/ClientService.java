@@ -29,7 +29,7 @@ public class ClientService {
             clientRepository.save(client);
             return "Cliente " + client.getName() + " atualizado com sucesso!";
         } else {
-            return "Cliente não encontrado!";
+            return "Cliente não encontrado!"; //msg de erro
         }
     }
 
@@ -46,19 +46,15 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    public Optional<Client> findById(Long id) {
-        return clientRepository.findById(id);
+    public Client findById(Long id) {
+        return clientRepository.findById(id).orElse(null);
     }
 
     public List<Client> findByNameContaining(String name) {
         return clientRepository.findByNameContaining(name);
     }
 
-    public List<Client> findByAgeGreaterThanEqual(Integer age){
-        return clientRepository.findByAgeGreaterThanEqual(age);
-    }
-
-    public Optional<Client> findByCpf(String cpf){
+    public List<Client> findByCpf(String cpf){
         return clientRepository.findByCpf(cpf);
     }
 

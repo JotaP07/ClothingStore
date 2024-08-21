@@ -62,4 +62,11 @@ public class SaleController {
             return new ResponseEntity<>("Erro: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    //1. Cliente que mais gastou em compras
+//2. Produtos mais vendidos
+//3. Vendas realizadas por um funcionário específico
+//4. Clientes que realizaram compras acima de um determinado valor
+//5. Produtos vendidos em um determinado período
 }
