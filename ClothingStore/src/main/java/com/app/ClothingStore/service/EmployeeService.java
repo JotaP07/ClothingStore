@@ -42,4 +42,19 @@ public class EmployeeService {
         }
     }
 
+    public List<Employee> findAll(){
+        return employeeRepository.findAll();
+    }
+
+    public Employee findById(Long id) {
+        return employeeRepository.findById(id).orElse(null);
+    }
+
+    public  List<Employee> findByNameContaining(String name){
+        return employeeRepository.findByNameContaining(name);
+    }
+
+    public  List<Employee> findByRegistration(String registration){
+        return employeeRepository.findByRegistration(registration);
+    }
 }
