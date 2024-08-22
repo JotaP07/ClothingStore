@@ -8,9 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-//    public List<Product> findByName(String name);
- //   public List<Product> findNameContaining(String name);
- //   public List<Product> findByPriceGreaterThan(Double price);
+    List<Product> findByNameContaining(String name);
+    List<Product> findByPriceGreaterThan(Double price);
 
     @Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice")
     public List<Product> findProductsInRange(@Param("minPrice") Double minPrice, @Param("maxPrice") Double maxPrice);
