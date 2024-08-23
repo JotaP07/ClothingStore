@@ -27,7 +27,6 @@ public class Product {
     @NotBlank(message = "O nome nao deve estar vazio!")
     private String name;
 
-    //@NumberFormat
     @NotNull(message = "Deve conter um preço!")
     @Positive(message = "O valor deve ser maior que zero!")
     private Double price;
@@ -36,3 +35,4 @@ public class Product {
     @JsonIgnoreProperties("products")
     private List<Sale> sales;
 }
+    //@NumberFormat

@@ -1,11 +1,7 @@
 package com.app.ClothingStore.entity;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,29 +22,24 @@ public class Sale {
 
     private String address;
 
-    @NotNull(message = "Valor total é obrigatório")
-    @Positive(message = "O valor total deve ser maior que zero")
-    private Double totalValue;
+    private double totalValue;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "client_id")
-    @NotNull(message = "cliente não pode estar vazio")
     @JsonIgnoreProperties("sales")
     private Client client;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "employee_id")
-    @NotNull(message = "funcionario nao pode estar vazio")
+    @JsonIgnoreProperties("sales")
     private Employee employee;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(
             name = "sale_product",
             joinColumns = @JoinColumn(name = "sale_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    @NotEmpty(message = "é necessário selecionar ao menos 1 item")
     @JsonIgnoreProperties("sales")
     private List<Product> products;
-
 }
