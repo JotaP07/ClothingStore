@@ -2,11 +2,15 @@ package com.app.ClothingStore.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 @Entity
@@ -22,6 +26,8 @@ public class Sale {
 
     private String address;
 
+    @NotNull
+    @Positive
     private double totalValue;
 
     @ManyToOne
@@ -42,4 +48,5 @@ public class Sale {
     )
     @JsonIgnoreProperties("sales")
     private List<Product> products;
+
 }

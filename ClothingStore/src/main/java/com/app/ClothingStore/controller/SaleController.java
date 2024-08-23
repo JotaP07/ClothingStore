@@ -1,5 +1,6 @@
 package com.app.ClothingStore.controller;
 
+import com.app.ClothingStore.entity.Product;
 import com.app.ClothingStore.entity.Sale;
 import com.app.ClothingStore.service.SaleService;
 import jakarta.persistence.EntityNotFoundException;
@@ -81,6 +82,54 @@ public class SaleController {
         try {
             String message = saleService.delete(id);
             return new ResponseEntity<>(message, HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/findAll")
+    public ResponseEntity<?> findAll() {
+        try {
+            List<Sale> sales = saleService.findAll();
+            return new ResponseEntity<>(sales, HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/findByAddress")
+    public ResponseEntity<?> findByNameContaining(@RequestParam String address) {
+        try {
+            List<Sale> sales = saleService.findByAddress(address);
+            return new ResponseEntity<>(sales, HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<?> findById(@PathVariable Long id) {
+        try {
+            Sale sale = saleService.findById(id);
+            return new ResponseEntity<>(sale, HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
