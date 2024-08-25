@@ -90,7 +90,7 @@ public class EmployeeController {
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
         try {
-            List<Employee> employees = employeeService.findAll();
+            List<Employee> employees = employeeService.findAllEmployees();
             return new ResponseEntity<>(employees, HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {

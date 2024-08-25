@@ -44,14 +44,14 @@ public class ClientService {
         return "Cliente com ID " + id + " deletado com sucesso!";
     }
 
+    public Client findById(Long id) {
+        return validationService.validateClientById(id);
+    }
+
     public List<Client> findAllClients() {
         List<Client> clients = clientRepository.findAll();
         validationService.validateList(clients, "cliente");
         return clients;
-    }
-
-    public Client findById(Long id) {
-        return validationService.validateClientById(id);
     }
 
     public List<Client> findByNameContaining(String name) {

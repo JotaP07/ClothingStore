@@ -82,6 +82,21 @@ public class ValidationService {
         }
     }
 
+    public void validateRegistration(String registration) {
+        if (registration == null || registration.trim().isEmpty()) {
+            throw new IllegalArgumentException("O parâmetro 'registration' é obrigatório e não pode estar vazio!");
+        }
+        try {
+            int regValue = Integer.parseInt(registration.trim());
+            if (regValue < 0) {
+                throw new IllegalArgumentException("O registro deve ser um valor positivo!");
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("O parâmetro 'registration' deve ser um número inteiro válido!");
+        }
+    }
+
+
 
 
 
