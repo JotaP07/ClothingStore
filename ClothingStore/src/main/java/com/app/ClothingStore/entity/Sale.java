@@ -26,8 +26,6 @@ public class Sale {
 
     private String address;
 
-    @NotNull
-    @Positive
     private double totalValue;
 
     @ManyToOne

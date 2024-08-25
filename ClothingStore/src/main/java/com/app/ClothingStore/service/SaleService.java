@@ -1,5 +1,8 @@
 package com.app.ClothingStore.service;
 
+import com.app.ClothingStore.dto.ClientByMinSpendingDTO;
+import com.app.ClothingStore.dto.ClientSpendingDTO;
+import com.app.ClothingStore.dto.TopSellingProductsDTO;
 import com.app.ClothingStore.entity.Client;
 import com.app.ClothingStore.entity.Employee;
 import com.app.ClothingStore.entity.Product;
@@ -10,8 +13,10 @@ import com.app.ClothingStore.repository.ProductRepository;
 import com.app.ClothingStore.repository.SaleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -169,7 +174,7 @@ public class SaleService {
                 .orElseThrow(() -> new EntityNotFoundException("Venda com o ID " + id + " não encontrado!"));
     }
 
-    public List<Sale> findAll(){
+    public List<Sale> findAll() {
         List<Sale> sales = saleRepository.findAll();
         if (sales.isEmpty()) {
             throw new EntityNotFoundException("Nenhuma venda encontrada!");
@@ -178,7 +183,7 @@ public class SaleService {
     }
 
 
-    public List<Sale> findByAddress(String address){
+    public List<Sale> findByAddress(String address) {
         if (address == null || address.trim().isEmpty()) {
             throw new IllegalArgumentException("O parâmetro 'addres' é obrigatório e não deve estar vazia!");
         }
@@ -186,50 +191,52 @@ public class SaleService {
             throw new IllegalArgumentException("O parâmetro 'addres' não deve ser um número!");
         }
         List<Sale> sales = saleRepository.findByAddress(address);
-        if (sales.isEmpty()){
-            throw new EntityNotFoundException("Nenhuma venda encontrada com o endereço: "+ address);
+        if (sales.isEmpty()) {
+            throw new EntityNotFoundException("Nenhuma venda encontrada com o endereço: " + address);
         }
         return sales;
     }
+
+
+    public Client findByClientId(Long clientId) {
+        if (clientId == null || clientId <= 0) {
+            throw new IllegalArgumentException("O ID do cliente deve ser um valor positivo!");
+        }
+
+        List<Sale> sales = saleRepository.findByClientId(clientId);
+        if (sales.isEmpty()) {
+            throw new EntityNotFoundException("Cliente com ID " + clientId + " não possui vendas!");
+        }
+        //retorna somente 1
+        return sales.get(0).getClient();
+    }
+
+    public ClientSpendingDTO findTopClientBySpending() {
+        List<ClientSpendingDTO> clients = saleRepository.findClientsOrderedBySpending();
+        if (clients.isEmpty()) {
+            throw new EntityNotFoundException("Nenhum cliente encontrado!");
+        }
+        return clients.get(0);
+    }
+
+    public List<TopSellingProductsDTO> findTopSellingProducts() {
+        List<TopSellingProductsDTO> topProducts = saleRepository.findTopSellingProducts();
+        if (topProducts.isEmpty()) {
+             throw new EntityNotFoundException("Nenhum produto encontrado!");
+        }
+        return topProducts;
+    }
+
+
+    public List<Sale> findSalesByEmployeeId(Long employeeId) {
+        return saleRepository.findSalesByEmployeeId(employeeId);
+    }
+
+    public List<ClientByMinSpendingDTO> findClientsByMinSpending(Double minValue) {
+        return saleRepository.findClientsByMinSpending(minValue);
+    }
+
 }
 
 
-
-
-
-
-
-
-
-
-//
-//    public Client validClientById(Long id){
-//        if (clientRepository.existsById(id)){
-//            Client client = clientRepository.findById(id).get();
-//            return client;
-//        }
-//        throw new RuntimeException("Cliente com o id "+ id + "não encontrado!");
-//    }
-//
-//    public Employee validEmployeeById(Long id){
-//        if (employeeRepository.existsById(id)){
-//            Employee employee = employeeRepository.findById(id).get();
-//            return employee;
-//        }
-//        throw new RuntimeException("Funcionário com o id "+ id + "não encontrado!");
-//    }
-
-
-
-    //       sale.setClient(validClientById(sale.getClient().getId()));
-//       sale.setEmployee(validEmployeeById(sale.getEmployee().getId()));
-
-//        if (sale == null) {
-//            throw new IllegalArgumentException("A venda não pode ser nula!");
-//        }
-//        if (sale.getClient() == null || sale.getEmployee() == null || sale.getProducts() == null || sale.getProducts().isEmpty()) {
-//            throw new IllegalArgumentException("A venda deve ter um cliente, um funcionário e pelo menos um produto associado!");
-//        }
-//        saleRepository.save(sale);
-//        return "Venda com ID " + sale.getId() + " salva com sucesso!";
 

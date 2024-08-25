@@ -1,7 +1,13 @@
 package com.app.ClothingStore.controller;
 
+
+import com.app.ClothingStore.dto.ClientByMinSpendingDTO;
+import com.app.ClothingStore.dto.ClientSpendingDTO;
+import com.app.ClothingStore.dto.TopSellingProductsDTO;
+import com.app.ClothingStore.entity.Client;
 import com.app.ClothingStore.entity.Product;
 import com.app.ClothingStore.entity.Sale;
+import com.app.ClothingStore.service.ClientService;
 import com.app.ClothingStore.service.SaleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -19,6 +25,9 @@ public class SaleController {
 
     @Autowired
     private SaleService saleService;
+
+    @Autowired
+    private ClientService clientService;
 
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestBody @Valid Sale sale, BindingResult result) {
@@ -142,9 +151,87 @@ public class SaleController {
         }
     }
 
-    //1. Cliente que mais gastou em compras
-    //2. Produtos mais vendidos
-    //3. Vendas realizadas por um funcionário específico
-    //4. Clientes que realizaram compras acima de um determinado valor
-    //5. Produtos vendidos em um determinado período
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<?> findByClientId(@PathVariable("clientId") Long clientId) {
+        try {
+            Client client = saleService.findByClientId(clientId);
+            return new ResponseEntity<>(client, HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/TopClient")
+    public ResponseEntity<?> findTopClientBySpending() {
+        try {
+            ClientSpendingDTO clientSpendingDTO = saleService.findTopClientBySpending();
+            return new ResponseEntity<>(clientSpendingDTO, HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("/TopProducts")
+    public ResponseEntity<?> findTopSellingProducts() {
+        try {
+            List<TopSellingProductsDTO> topProducts = saleService.findTopSellingProducts();
+            return ResponseEntity.ok(topProducts);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping("/ByEmployee/{employeeId}")
+    public ResponseEntity<?> findSalesByEmployeeId(@PathVariable("employeeId") Long employeeId) {
+        try {
+            List<Sale> sales = saleService.findSalesByEmployeeId(employeeId);
+            return new ResponseEntity<>(sales, HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/clientsByMinSpending")
+    public ResponseEntity<?> findClientsByMinSpending(@RequestParam("minValue") Double minValue) {
+        try {
+            List<ClientByMinSpendingDTO> clients = saleService.findClientsByMinSpending(minValue);
+            return new ResponseEntity<>(clients, HttpStatus.OK);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
+
+
+// Faltou -> Produtos vendidos em um determinado período
