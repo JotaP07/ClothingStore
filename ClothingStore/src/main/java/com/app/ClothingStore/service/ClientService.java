@@ -19,97 +19,60 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private ValidationService validationService;
+
     public String save(Client client) {
         clientRepository.save(client);
         return "Cliente " + client.getName() + " salvo com sucesso!";
     }
 
-    public void saveAll(List<Client> clients){
+    public void saveAll(List<Client> clients) {
         clientRepository.saveAll(clients);
     }
 
     public String update(Client client, Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("O ID não deve ser nulo ou negativo!");
-        }
-        if (clientRepository.existsById(id)) {
-            client.setId(id);
-            clientRepository.save(client);
-            return "Cliente " + client.getName() + " atualizado com sucesso!";
-        } else {
-            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado!"); //msg de erro
-        }
+        validationService.validateClientById(id);
+        client.setId(id);
+        clientRepository.save(client);
+        return "Cliente " + client.getName() + " atualizado com sucesso!";
     }
 
     public String delete(Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("O ID não deve ser nulo ou negativo!");
-        }
-        if (clientRepository.existsById(id)) {
-            clientRepository.deleteById(id);
-            return "Cliente com ID " + id + " deletado com sucesso!";
-        } else {
-            throw new EntityNotFoundException("Cliente com ID " + id + " não encontrado!");
-        }
+        validationService.validateClientById(id);
+        clientRepository.deleteById(id);
+        return "Cliente com ID " + id + " deletado com sucesso!";
     }
 
-    public List<Client> findAll(){
+    public List<Client> findAllClients() {
         List<Client> clients = clientRepository.findAll();
-        if (clients.isEmpty()) {
-            throw  new EntityNotFoundException("Nenhum cliente encontrado!");
-        }
+        validationService.validateList(clients, "cliente");
         return clients;
     }
 
     public Client findById(Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("O ID não deve ser nulo ou negativo!");
-        }
-        return clientRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cliente com o ID " + id + " não encontrado!"));
+        return validationService.validateClientById(id);
     }
 
     public List<Client> findByNameContaining(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("O parâmetro 'name' é obrigatório e não pode estar vazio!");
-        }
-        if (name.matches("\\d+")) { // 'matches' verifica se a string corresponde à expressão regular fornecida
-            throw new IllegalArgumentException("O parâmetro 'name' não pode ser um número!");
-        }
+        validationService.validateString(name, "name");
         List<Client> clients = clientRepository.findByNameContaining(name);
-        if (clients.isEmpty()) {
-            throw new EntityNotFoundException("Nenhum cliente encontrado com a letra/palavra: " +name);
-        }
+        validationService.validateList(clients, "cliente");
         return clients;
     }
 
-    public List<Client> findByCpf(String cpf){
-        if (cpf == null || cpf.trim().isEmpty()) {
-            throw new IllegalArgumentException("O parâmetro 'cpf' é obrigatório e não pode estar vazio!");
-        }
-        //validando o cpf no request
-        String cpfRegex = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$";
-        if (!cpf.matches(cpfRegex)) {
-            throw new IllegalArgumentException("O CPF fornecido não está no formato correto!");
-        }
+    public List<Client> findByCpf(String cpf) {
+        validationService.validateCpf(cpf);
         List<Client> client = clientRepository.findByCpf(cpf);
-        if (client.isEmpty()) {
-            throw new EntityNotFoundException("Nenhum cliente encontrado com o CPF: " +cpf);
-        }
+        validationService.validateList(client, "cliente");
         return client;
     }
 
     public List<Client> findByNameAndAge(String name, Integer age) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("O parâmetro 'name' é obrigatório e não pode estar vazio!");
-        }
-        if (age!= null && age <= 0) {
-            throw new IllegalArgumentException("A idade deve ser um valor positivo!");
-        }
+        validationService.validateString(name, "name");
+        validationService.validateAge(age);
         List<Client> clients = clientRepository.findByNameAndAge(name, age);
-        if (clients.isEmpty()) {
-            throw new EntityNotFoundException("Nenhum cliente encontrado com o nome " + name + (age != null ? " e idade " + age : "") + ".");
-        }
+        validationService.validateList(clients, "cliente");
         return clients;
     }
 

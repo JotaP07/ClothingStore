@@ -53,25 +53,6 @@ public class SaleService {
     }
 
 
-    //funções pra validar
-//    private Client validateClient(Long id) {
-//        if (id == null || id <= 0) {
-//            throw new IllegalArgumentException("O ID do cliente deve ser um valor positivo!");
-//        }
-//        return clientRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Cliente com ID " + id + " não encontrado!"));
-//    }
-//
-//    private Employee validateEmployee(Long id) {
-//        return employeeRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Funcionário com ID " + id + " não encontrado!"));
-//    }
-//
-//    private Product validateProduct(Long id) {
-//        return productRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Produto com ID " + id + " não encontrado!"));
-//    }
-
     public String save(Sale sale) {
         if (sale == null) {
             throw new IllegalArgumentException("A venda não pode ser nula!");
@@ -199,9 +180,7 @@ public class SaleService {
 
 
     public Client findByClientId(Long clientId) {
-        if (clientId == null || clientId <= 0) {
-            throw new IllegalArgumentException("O ID do cliente deve ser um valor positivo!");
-        }
+        validationService.validateClientById(clientId);
 
         List<Sale> sales = saleRepository.findByClientId(clientId);
         if (sales.isEmpty()) {
@@ -229,10 +208,17 @@ public class SaleService {
 
 
     public List<Sale> findSalesByEmployeeId(Long employeeId) {
-        return saleRepository.findSalesByEmployeeId(employeeId);
+        validationService.validateEmployeeById(employeeId);
+
+        List<Sale> employeeSales = saleRepository.findSalesByEmployeeId(employeeId);
+        if (employeeSales.isEmpty()) {
+            throw new EntityNotFoundException("Cliente com ID " + employeeId + " não possui vendas!");
+        }
+        return employeeSales;
     }
 
     public List<ClientByMinSpendingDTO> findClientsByMinSpending(Double minValue) {
+        validationService.validateMinSpendingValue(minValue);
         return saleRepository.findClientsByMinSpending(minValue);
     }
 

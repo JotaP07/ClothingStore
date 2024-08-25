@@ -92,7 +92,7 @@ public class ClientController {
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() { //com o <?> posso retornar qualquer tipo de dado :)
         try {
-            List<Client> clients = clientService.findAll();
+            List<Client> clients = clientService.findAllClients();
             return new ResponseEntity<>(clients, HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
