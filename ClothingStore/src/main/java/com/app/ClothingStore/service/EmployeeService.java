@@ -36,7 +36,6 @@ public class EmployeeService {
         validationService.validateEmployeeById(id);
         employeeRepository.deleteById(id);
         return "Funcionário(a) com ID " + id + " deletado com sucesso!";
-
     }
 
     public Employee findById(Long id) {
