@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.NumberFormat;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O nome nao deve estar vazio!")
+    @NotBlank(message = "O nome não deve estar vazio!")
     private String name;
 
     @NotNull(message = "Deve conter um preço!")

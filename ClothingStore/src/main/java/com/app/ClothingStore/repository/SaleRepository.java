@@ -3,15 +3,11 @@ package com.app.ClothingStore.repository;
 import com.app.ClothingStore.dto.ClientByMinSpendingDTO;
 import com.app.ClothingStore.dto.ClientSpendingDTO;
 import com.app.ClothingStore.dto.TopSellingProductsDTO;
-import com.app.ClothingStore.entity.Client;
-import com.app.ClothingStore.entity.Product;
 import com.app.ClothingStore.entity.Sale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-
-import java.awt.print.Pageable;
 import java.util.List;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {

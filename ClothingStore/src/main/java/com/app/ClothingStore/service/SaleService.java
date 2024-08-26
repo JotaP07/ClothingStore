@@ -11,14 +11,9 @@ import com.app.ClothingStore.repository.ClientRepository;
 import com.app.ClothingStore.repository.EmployeeRepository;
 import com.app.ClothingStore.repository.ProductRepository;
 import com.app.ClothingStore.repository.SaleRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,9 +49,7 @@ public class SaleService {
 
 
     public String save(Sale sale) {
-        if (sale == null) {
-            throw new IllegalArgumentException("A venda não pode ser nula!");
-        }
+        validationService.validateSale(sale);
 
         Client client = validationService.validateClientById(sale.getClient().getId());
         sale.setClient(client);
@@ -82,9 +75,7 @@ public class SaleService {
         }
 
         for (Sale sale : sales) {
-            if (sale == null) {
-                throw new IllegalArgumentException("Venda não pode ser nula na lista!");
-            }
+            validationService.validateSale(sale);
 
             Client client = validationService.validateClientById(sale.getClient().getId());
             sale.setClient(client);
@@ -105,12 +96,8 @@ public class SaleService {
     }
 
     public String update(Sale sale, Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("O ID deve ser um valor positivo!");
-        }
-        if (sale == null) {
-            throw new IllegalArgumentException("A venda não pode ser nula!");
-        }
+        validationService.validateSaleById(id);
+        validationService.validateSale(sale);
 
         Client client = validationService.validateClientById(sale.getClient().getId());
         sale.setClient(client);
@@ -123,105 +110,71 @@ public class SaleService {
                 .collect(Collectors.toList());
         sale.setProducts(products);
 
-        if (saleRepository.existsById(id)) {
-            sale.setId(id);
-            double totalValue = totalCalculator(products);
-            sale.setTotalValue(totalValue);
+        validationService.validateSaleById(id);
+        sale.setId(id);
+        double totalValue = totalCalculator(products);
+        sale.setTotalValue(totalValue);
 
-            saleRepository.save(sale);
-            return "Venda com o ID " + sale.getId() + " atualizada com sucesso!\n" + "Valor total: R$ " + totalValue;
-        } else {
-            throw new EntityNotFoundException("Venda com o ID " + id + " não encontrada!");
-        }
+        saleRepository.save(sale);
+        return "Venda com o ID " + sale.getId() + " atualizada com sucesso!\n" + "Valor total: R$ " + totalValue;
+
     }
 
     public String delete(Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("O ID deve ser um valor positivo!");
-        }
-        if (saleRepository.existsById(id)) {
-            saleRepository.deleteById(id);
-            return "Venda com ID " + id + " deletada com sucesso!";
-        } else {
-            throw new EntityNotFoundException("Venda com ID " + id + " não encontrada!");
-        }
+        validationService.validateSaleById(id);
+        saleRepository.deleteById(id);
+        return "Venda com ID " + id + " deletada com sucesso!";
     }
 
     public Sale findById(Long id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("O ID não deve ser nulo ou negativo!");
-        }
-        return saleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Venda com o ID " + id + " não encontrado!"));
+        return validationService.validateSaleById(id);
     }
 
     public List<Sale> findAll() {
         List<Sale> sales = saleRepository.findAll();
-        if (sales.isEmpty()) {
-            throw new EntityNotFoundException("Nenhuma venda encontrada!");
-        }
+        validationService.validateList(sales, "venda");
         return sales;
     }
-
 
     public List<Sale> findByAddress(String address) {
-        if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException("O parâmetro 'addres' é obrigatório e não deve estar vazia!");
-        }
-        if (address.matches("\\d+")) {
-            throw new IllegalArgumentException("O parâmetro 'addres' não deve ser um número!");
-        }
+        validationService.validateString(address, "address");
         List<Sale> sales = saleRepository.findByAddress(address);
-        if (sales.isEmpty()) {
-            throw new EntityNotFoundException("Nenhuma venda encontrada com o endereço: " + address);
-        }
+        validationService.validateList(sales, "venda com endereço " + address);
         return sales;
     }
 
-
-    public Client findByClientId(Long clientId) {
+    public Client findByClientId(Long clientId) { //procurar a venda por id de cliente
         validationService.validateClientById(clientId);
-
         List<Sale> sales = saleRepository.findByClientId(clientId);
-        if (sales.isEmpty()) {
-            throw new EntityNotFoundException("Cliente com ID " + clientId + " não possui vendas!");
-        }
-        //retorna somente 1
-        return sales.get(0).getClient();
+        validationService.validateList(sales, "cliente com ID " + clientId);
+        return sales.get(0).getClient();//retorna somente 1
     }
 
-    public ClientSpendingDTO findTopClientBySpending() {
+    public ClientSpendingDTO findTopClientBySpending() { // caso queira listar mais de um transformar em LIST
         List<ClientSpendingDTO> clients = saleRepository.findClientsOrderedBySpending();
-        if (clients.isEmpty()) {
-            throw new EntityNotFoundException("Nenhum cliente encontrado!");
-        }
+        validationService.validateList(clients, "cliente");
         return clients.get(0);
     }
 
     public List<TopSellingProductsDTO> findTopSellingProducts() {
         List<TopSellingProductsDTO> topProducts = saleRepository.findTopSellingProducts();
-        if (topProducts.isEmpty()) {
-             throw new EntityNotFoundException("Nenhum produto encontrado!");
-        }
+        validationService.validateList(topProducts, "produto vendido");
         return topProducts;
     }
 
-
     public List<Sale> findSalesByEmployeeId(Long employeeId) {
         validationService.validateEmployeeById(employeeId);
-
         List<Sale> employeeSales = saleRepository.findSalesByEmployeeId(employeeId);
-        if (employeeSales.isEmpty()) {
-            throw new EntityNotFoundException("Cliente com ID " + employeeId + " não possui vendas!");
-        }
+        validationService.validateList(employeeSales, "venda realizada por funcionário(a)");
         return employeeSales;
     }
 
     public List<ClientByMinSpendingDTO> findClientsByMinSpending(Double minValue) {
         validationService.validateMinSpendingValue(minValue);
-        return saleRepository.findClientsByMinSpending(minValue);
+        List<ClientByMinSpendingDTO> clientsSales = saleRepository.findClientsByMinSpending(minValue);
+        validationService.validateList(clientsSales, "cliente com valor de compra miníma " + minValue);
+        return clientsSales;
     }
-
 }
 
 

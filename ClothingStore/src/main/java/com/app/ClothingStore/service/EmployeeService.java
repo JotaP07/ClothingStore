@@ -2,7 +2,6 @@ package com.app.ClothingStore.service;
 
 import com.app.ClothingStore.entity.Employee;
 import com.app.ClothingStore.repository.EmployeeRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -4,7 +4,6 @@ import com.app.ClothingStore.entity.Client;
 import com.app.ClothingStore.service.ClientService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("client")

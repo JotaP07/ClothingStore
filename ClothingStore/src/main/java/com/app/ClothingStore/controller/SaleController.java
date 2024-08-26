@@ -5,7 +5,6 @@ import com.app.ClothingStore.dto.ClientByMinSpendingDTO;
 import com.app.ClothingStore.dto.ClientSpendingDTO;
 import com.app.ClothingStore.dto.TopSellingProductsDTO;
 import com.app.ClothingStore.entity.Client;
-import com.app.ClothingStore.entity.Product;
 import com.app.ClothingStore.entity.Sale;
 import com.app.ClothingStore.service.ClientService;
 import com.app.ClothingStore.service.SaleService;
@@ -59,6 +58,12 @@ public class SaleController {
         try {
             saleService.saveAll(sales);
             return new ResponseEntity<>("Vendas salvas com sucesso!", HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 
         } catch (Exception e) {
             return new ResponseEntity<>("Ocorreu um erro inesperado: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,11 +17,6 @@ public class ClientByMinSpendingDTO {
     private Integer age;
     private String telephone;
     private Double totalSpendingOfPurchases;
-
 }
-
-
-//    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
-//    @JsonIgnoreProperties("client")
 
 

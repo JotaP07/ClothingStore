@@ -136,24 +136,36 @@ public class ProductController {
     }
 
     @GetMapping("/findByPriceGreaterThan")
-    public ResponseEntity<List<Product>> findByPriceGreaterThan(@RequestParam(required = false, defaultValue = "0") Double price) {
+    public ResponseEntity<?> findByPriceGreaterThan(@RequestParam Double price) {
         try {
             List<Product> list = productService.findByPriceGreaterThan(price);
             return new ResponseEntity<>(list, HttpStatus.OK);
 
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/findProductsInRange")
-    public ResponseEntity<List<Product>> findProductsInRange(@RequestParam(required = false, defaultValue = "0") Double minPrice, @RequestParam(required = false, defaultValue = "0") Double maxPrice) {
+    public ResponseEntity<?> findProductsInRange(@RequestParam Double minPrice, @RequestParam Double maxPrice) {
         try {
             List<Product> list = productService.findProductsInRange(minPrice, maxPrice);
             return new ResponseEntity<>(list, HttpStatus.OK);
 
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
